@@ -1,0 +1,43 @@
+spring.profiles.default: development # profile used when no @Profile is configured on a bean
+spring.profiles.active: development # default active profile when not set by environment 
+
+spring.profiles.group:
+  test: development, test-config
+  ci: development, test-config
+
+spring:
+  output.ansi.enabled: always
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties.hibernate:
+      id:
+        db_structure_naming_strategy: legacy
+  flyway:
+    locations: classpath:db/migration/common
+    clean-on-validation-error: false
+    table: schema_version # prior flyway version used this table and we keep it
+
+---
+
+spring:
+  config.activate.on-profile: development
+  datasource:
+    url: jdbc:postgresql://localhost:5432/admin
+    username: admin
+    password: admin
+  jpa:
+    # immediately show sql statements on execution, see also
+    show-sql: true # show sql by jpa logger (prefixed with 'Hibernate:')
+    # hibernate statistics also require hibernate logging to be enabled (s. below logging.level.org.hibernate)
+    # properties.hibernate.generate_statistics: true
+  flyway:
+    locations: classpath:db/migration/common
+    clean-on-validation-error: true
+
+---
+
+spring:
+  config.activate.on-profile: test-config
+  flyway:
+    clean-on-validation-error: true
